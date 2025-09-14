@@ -43,12 +43,47 @@ export const register = async (req, res) => {
   }
 };
 
-export const login = (req, res) => {
-  // Login logic here
-  res.send("User logged in");
+export const login = async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    if (!email || !password) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+    if (password.length < 6) {
+      return res
+        .status(400)
+        .json({ message: "Password must be at least 6 characters long" });
+    }
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ message: "Invalid email or password" });
+    }
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: "Invalid email or password" });
+    }
+    generateToken(user._id, res);
+    return res.status(200).json({
+      message: "User logged in successfully",
+      data: {
+        _id: user._id,
+        fullName: user.fullName,
+        email: user.email,
+        profilePicture: user.profilePicture,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error" });
+  }
 };
 
 export const logout = (req, res) => {
-  // Logout logic here
-  res.send("User logged out");
+  try {
+    res.cookie("jwt-token", "", {
+      maxAge: 0,
+    });
+    res.status(200).json({ message: "User logged out successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error" });
+  }
 };
