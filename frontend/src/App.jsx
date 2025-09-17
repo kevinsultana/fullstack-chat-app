@@ -19,37 +19,43 @@ export default function App() {
   if (isCheckingAuth) {
     return (
       <div className="h-screen flex justify-center items-center flex-col">
-        <span className="loading loading-dots loading-xl"></span>
-        <span className="text-xl mt-2">Loading...</span>
+        <div className="flex flex-col items-center space-y-4">
+          <span className="loading loading-dots loading-xl text-primary"></span>
+          <span className="text-xl">Checking authentication...</span>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-slate-900 transition-colors duration-300">
+    <div className="min-h-screen">
       <Navbar />
+
       <Routes>
         <Route
           path="/"
-          element={authUser ? <Homepage /> : <Navigate to="/login" />}
+          element={authUser ? <Homepage /> : <Navigate to="/login" replace />}
         />
         <Route
           path="/login"
-          element={!authUser ? <LoginPage /> : <Navigate to="/" />}
+          element={!authUser ? <LoginPage /> : <Navigate to="/" replace />}
         />
         <Route
           path="/register"
-          element={!authUser ? <RegisterPage /> : <Navigate to="/" />}
+          element={!authUser ? <RegisterPage /> : <Navigate to="/" replace />}
         />
         <Route
           path="/settings"
-          element={authUser ? <SettingPage /> : <Navigate to="/login" />}
+          element={
+            authUser ? <SettingPage /> : <Navigate to="/login" replace />
+          }
         />
         <Route
           path="/profile"
-          element={authUser ? <Profile /> : <Navigate to="/login" />}
+          element={authUser ? <Profile /> : <Navigate to="/login" replace />}
         />
       </Routes>
+
       <Toaster />
     </div>
   );

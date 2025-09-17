@@ -26,6 +26,26 @@ export const useAuthStore = create((set) => ({
       await baseURL.post("/auth/logout");
     } catch (error) {
       console.error("Logout failed:", error);
+    } finally {
+      // Hapus authUser dari state setelah logout (berhasil atau gagal)
+      set({ authUser: null });
+    }
+  },
+
+  login: async (formData) => {
+    set({ isLoggingIn: true });
+    try {
+      const res = await baseURL.post("/auth/login", formData);
+      set({ authUser: res.data });
+      return { success: true };
+    } catch (error) {
+      return {
+        success: false,
+        message:
+          error.response?.data?.message || "Login failed. Please try again.",
+      };
+    } finally {
+      set({ isLoggingIn: false });
     }
   },
 
@@ -44,6 +64,24 @@ export const useAuthStore = create((set) => ({
       };
     } finally {
       set({ isSigningUp: false });
+    }
+  },
+
+  updateProfile: async (formData) => {
+    set({ isUpdatingProfile: true });
+    try {
+      const res = await baseURL.put("/auth/update-profile", formData);
+      set({ authUser: res.data });
+      return { success: true };
+    } catch (error) {
+      return {
+        success: false,
+        message:
+          error.response?.data?.message ||
+          "Failed to update profile. Please try again.",
+      };
+    } finally {
+      set({ isUpdatingProfile: false });
     }
   },
 }));

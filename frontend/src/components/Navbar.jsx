@@ -1,27 +1,40 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Sun, Moon } from "lucide-react";
-import { useThemeStore } from "../store/useThemeStore";
 import { useAuthStore } from "../store/useAuthStore";
-import { Navigate, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 
 export default function Navbar() {
-  const { isDarkMode, toggleDarkMode, initializeTheme } = useThemeStore();
   const { authUser, logout } = useAuthStore();
-
   const navigate = useNavigate();
+  const [theme, setTheme] = useState("light");
 
   useEffect(() => {
-    initializeTheme();
-  }, [initializeTheme]);
+    // Initialize theme from localStorage or default to light
+    const savedTheme = localStorage.getItem("theme") || "light";
+    setTheme(savedTheme);
+    document.documentElement.setAttribute("data-theme", savedTheme);
+  }, []);
 
-  const handleLogout = () => {
-    logout();
-    navigate("/login");
+  const toggleTheme = () => {
+    const newTheme = theme === "light" ? "dark" : "light";
+    setTheme(newTheme);
+    document.documentElement.setAttribute("data-theme", newTheme);
+    localStorage.setItem("theme", newTheme);
+  };
+
+  const handleLogout = async () => {
+    await logout();
+    navigate("/login", { replace: true });
   };
 
   return (
     <div className="w-full h-16 bg-blue-600 text-white flex items-center justify-between px-4">
-      <h1 className="text-lg font-bold">Kevin Chats</h1>
+      <h1
+        className="text-lg font-bold cursor-pointer"
+        onClick={() => navigate("/")}
+      >
+        Kevin Chats
+      </h1>
       <div className="space-x-4">
         {authUser && (
           <>
@@ -31,15 +44,21 @@ export default function Navbar() {
             >
               Settings
             </button>
+            <button
+              onClick={() => navigate("/profile")}
+              className="cursor-pointer"
+            >
+              Profile
+            </button>
             <button onClick={handleLogout} className="cursor-pointer">
               Logout
             </button>
           </>
         )}
 
-        {/* dark light mode toggle */}
-        <button onClick={toggleDarkMode}>
-          {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
+        {/* DaisyUI theme toggle */}
+        <button onClick={toggleTheme} className="btn btn-ghost btn-circle">
+          {theme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
         </button>
       </div>
     </div>
