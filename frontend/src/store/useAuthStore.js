@@ -95,7 +95,12 @@ export const useAuthStore = create((set, get) => ({
     const { authUser, socket } = get();
     if (!authUser || (socket && socket.connected)) return;
 
-    const newSocket = io("http://localhost:5000", {
+    const socketURL =
+      import.meta.env.MODE === "production"
+        ? "https://fullstack-chat-app-nbmd.onrender.com"
+        : "http://localhost:5000";
+
+    const newSocket = io(socketURL, {
       query: { userId: authUser._id },
     });
 
