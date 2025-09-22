@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { baseURL } from "../api/BaseUrl";
 
-export const useChatStore = create((set, get) => ({
+export const useChatStore = create((set) => ({
   users: [],
   isLoadingUsers: false,
   messages: [],

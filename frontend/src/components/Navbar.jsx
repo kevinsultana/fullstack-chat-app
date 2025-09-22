@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Sun, Moon, Bell, UserPlus } from "lucide-react";
+import { Sun, Moon, Bell, UserPlus, LogOut, UserRound } from "lucide-react";
 import { useAuthStore } from "../store/useAuthStore";
 import { useNavigate } from "react-router";
 import NotificationDropdown from "./NotificationDropdown";
@@ -13,7 +13,9 @@ export default function Navbar() {
     markNotificationsAsRead,
   } = useAuthStore();
   const navigate = useNavigate();
-  const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
+  const [theme, setTheme] = useState(
+    localStorage.getItem("theme") || "kevinchat"
+  );
 
   const unreadCount = notifications.filter((n) => !n.read).length;
 
@@ -21,7 +23,7 @@ export default function Navbar() {
     if (authUser) {
       fetchNotifications();
     }
-  }, [authUser]);
+  }, [authUser, fetchNotifications]);
 
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
@@ -29,7 +31,7 @@ export default function Navbar() {
   }, [theme]);
 
   const toggleTheme = () => {
-    setTheme(theme === "light" ? "dark" : "light");
+    setTheme((prev) => (prev === "kevinchat" ? "dark" : "kevinchat"));
   };
 
   const handleLogout = async () => {
@@ -38,21 +40,39 @@ export default function Navbar() {
   };
 
   return (
-    <div className="navbar bg-base-100 shadow-md sticky top-0 z-30">
+    <div className="navbar fixed top-0 z-30 border-b border-base-300/60 bg-base-100/80 backdrop-blur">
       <div className="flex-1">
-        <a onClick={() => navigate("/")} className="btn btn-ghost text-xl">
-          Kevin Chats
-        </a>
+        <button
+          onClick={() => navigate("/")}
+          className="btn btn-ghost px-2 text-left normal-case"
+        >
+          <span className="text-xl font-bold tracking-tight">
+            <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+              Kevin Chats
+            </span>
+          </span>
+          <span className="block text-xs font-medium text-base-content/60">
+            Connect, collaborate, and converse in style
+          </span>
+        </button>
       </div>
-      <div className="flex-none gap-2">
+      <div className="flex-none items-center gap-1 sm:gap-2">
         {authUser ? (
           <>
             <button
-              title="Find Friends"
+              title="Find friends"
               onClick={() => navigate("/find-friends")}
-              className="btn btn-ghost btn-circle"
+              className="btn btn-sm btn-primary hidden lg:inline-flex"
             >
-              <UserPlus />
+              <UserPlus className="h-4 w-4" />
+              <span>Find friends</span>
+            </button>
+            <button
+              title="Find friends"
+              onClick={() => navigate("/find-friends")}
+              className="btn btn-ghost btn-circle lg:hidden"
+            >
+              <UserPlus className="h-5 w-5" />
             </button>
 
             <div className="dropdown dropdown-end">
@@ -63,9 +83,9 @@ export default function Navbar() {
                 onClick={markNotificationsAsRead}
               >
                 <div className="indicator">
-                  <Bell />
+                  <Bell className="h-5 w-5" />
                   {unreadCount > 0 && (
-                    <span className="badge badge-sm badge-secondary indicator-item">
+                    <span className="badge badge-secondary badge-sm indicator-item">
                       {unreadCount}
                     </span>
                   )}
@@ -80,9 +100,9 @@ export default function Navbar() {
                 role="button"
                 className="btn btn-ghost btn-circle avatar"
               >
-                <div className="w-10 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
+                <div className="w-11 rounded-full border border-primary/20 bg-base-100 shadow-inner">
                   <img
-                    alt="User Profile"
+                    alt="User profile"
                     src={
                       authUser.profilePic ||
                       `https://ui-avatars.com/api/?name=${authUser.fullName}`
@@ -92,26 +112,48 @@ export default function Navbar() {
               </div>
               <ul
                 tabIndex={0}
-                className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
+                className="menu menu-sm dropdown-content mt-3 w-56 gap-1 rounded-box border border-base-300/60 bg-base-100 p-3 shadow-lg"
               >
-                <li>
-                  <a onClick={() => navigate("/profile")}>Profile</a>
+                <li className="menu-title text-xs uppercase text-base-content/60">
+                  Signed in as
+                  <span className="font-semibold text-base-content">
+                    {authUser.fullName}
+                  </span>
                 </li>
                 <li>
-                  <a onClick={handleLogout}>Logout</a>
+                  <button onClick={() => navigate("/profile")}>
+                    <UserRound className="h-4 w-4" />
+                    Profile
+                  </button>
+                </li>
+                <li>
+                  <button onClick={handleLogout}>
+                    <LogOut className="h-4 w-4" />
+                    Logout
+                  </button>
                 </li>
               </ul>
             </div>
           </>
         ) : (
-          <button className="btn btn-ghost" onClick={() => navigate("/login")}>
-            Login
+          <button
+            className="btn btn-primary btn-sm"
+            onClick={() => navigate("/login")}
+          >
+            Get started
           </button>
         )}
 
-        <button onClick={toggleTheme} className="btn btn-ghost btn-circle">
-          {theme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
-        </button>
+        <label className="btn btn-ghost btn-circle swap swap-rotate">
+          <input
+            type="checkbox"
+            onChange={toggleTheme}
+            checked={theme === "dark"}
+            aria-label="Toggle theme"
+          />
+          <Sun className="swap-on h-5 w-5" />
+          <Moon className="swap-off h-5 w-5" />
+        </label>
       </div>
     </div>
   );

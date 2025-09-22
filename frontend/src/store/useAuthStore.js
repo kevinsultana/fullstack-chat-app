@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { baseURL } from "../api/BaseUrl";
 import { io } from "socket.io-client";
+import toast from "react-hot-toast";
 
 export const useAuthStore = create((set, get) => ({
   authUser: null,
@@ -19,6 +20,7 @@ export const useAuthStore = create((set, get) => ({
       set({ authUser: res.data });
       get().connectSocket();
     } catch (error) {
+      console.error("Failed to verify session:", error);
       set({ authUser: null });
     } finally {
       set({ isCheckingAuth: false });
