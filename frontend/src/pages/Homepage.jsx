@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { useAuthStore } from "../store/useAuthStore";
 import { useChatStore } from "../store/useChatStore";
+import { socket } from "../api/socket";
 import UserList from "../components/UserList";
 import ChatPanel from "../components/ChatPanel";
 
@@ -12,7 +13,6 @@ export default function Homepage() {
     fetchUsers,
     activeUser,
     setActiveUser,
-    clearActiveUser,
     messages,
     isLoadingMessages,
     fetchMessages,
@@ -28,6 +28,21 @@ export default function Homepage() {
       fetchMessages(activeUser._id);
     }
   }, [activeUser, fetchMessages]);
+
+  useEffect(() => {
+    const handleReceiveMessage = (msg) => {
+      if (
+        activeUser &&
+        (msg.senderId === activeUser._id || msg.recipientId === activeUser._id)
+      ) {
+        sendMessage(activeUser._id, { text: msg.text, image: msg.image });
+      }
+    };
+    socket.on("newMessage", handleReceiveMessage);
+    return () => {
+      socket.off("newMessage", handleReceiveMessage);
+    };
+  }, [activeUser, sendMessage]);
 
   // Mark messages as mine if senderId === authUser._id
   const displayMessages = messages.map((msg) => ({
@@ -50,7 +65,7 @@ export default function Homepage() {
   };
 
   return (
-    <div className="flex h-[calc(100vh-4rem)] bg-white dark:bg-gray-900">
+    <div className="flex h-[calc(100vh-4rem)]">
       <UserList
         users={users}
         activeUser={activeUser}

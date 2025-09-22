@@ -7,7 +7,7 @@ export default function UserList({
   isLoading,
 }) {
   return (
-    <div className="h-full w-64 bg-gray-100 dark:bg-gray-800 border-r overflow-y-auto">
+    <div className="h-full w-64 border-r overflow-y-auto">
       <h2 className="p-4 font-bold text-lg border-b">Users</h2>
       {isLoading ? (
         <div className="p-4 text-center text-gray-500">Loading...</div>
@@ -16,9 +16,9 @@ export default function UserList({
           {users.map((user) => (
             <li
               key={user._id}
-              className={`p-4 cursor-pointer flex items-center gap-2 hover:bg-blue-100 dark:hover:bg-blue-900 transition ${
+              className={`p-4 cursor-pointer flex items-center gap-2 hover:bg-blue-100  transition ${
                 activeUser?._id === user._id
-                  ? "bg-blue-200 dark:bg-blue-700"
+                  ? "bg-gray-200 dark:text-black"
                   : ""
               }`}
               onClick={() => onSelectUser(user)}

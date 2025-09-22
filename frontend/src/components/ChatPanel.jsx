@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { useChatStore } from "../store/useChatStore";
 
 export default function ChatPanel({ messages, onSend, isLoading, activeUser }) {
   const [text, setText] = useState("");
@@ -19,7 +20,7 @@ export default function ChatPanel({ messages, onSend, isLoading, activeUser }) {
 
   return (
     <div className="flex flex-col h-full flex-1">
-      <div className="flex items-center p-4 border-b bg-white dark:bg-gray-900">
+      <div className="flex items-center p-4 border-b ">
         <img
           src={
             activeUser?.profilePic ||
@@ -32,7 +33,7 @@ export default function ChatPanel({ messages, onSend, isLoading, activeUser }) {
           {activeUser?.fullName || "Select a user"}
         </span>
       </div>
-      <div className="flex-1 overflow-y-auto p-4 bg-gray-50 dark:bg-gray-900">
+      <div className="flex-1 overflow-y-auto p-4 ">
         {isLoading ? (
           <div className="text-center text-gray-500">Loading messages...</div>
         ) : (
@@ -48,7 +49,7 @@ export default function ChatPanel({ messages, onSend, isLoading, activeUser }) {
                   className={`max-w-xs p-3 rounded-lg shadow ${
                     msg.isMine
                       ? "bg-blue-500 text-white"
-                      : "bg-gray-200 dark:bg-gray-700 dark:text-white"
+                      : "bg-gray-200 text-black"
                   }`}
                 >
                   {msg.text && <div>{msg.text}</div>}
@@ -70,10 +71,7 @@ export default function ChatPanel({ messages, onSend, isLoading, activeUser }) {
         )}
       </div>
       {activeUser && (
-        <form
-          onSubmit={handleSend}
-          className="p-4 border-t bg-white dark:bg-gray-900 flex gap-2"
-        >
+        <form onSubmit={handleSend} className="p-4 border-t flex gap-2">
           <input
             type="text"
             className="flex-1 px-3 py-2 rounded border"

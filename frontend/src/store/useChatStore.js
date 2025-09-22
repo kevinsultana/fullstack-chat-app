@@ -1,7 +1,8 @@
 import { create } from "zustand";
 import { baseURL } from "../api/BaseUrl";
+import { useAuthStore } from "./useAuthStore";
 
-export const useChatStore = create((set) => ({
+export const useChatStore = create((set, get) => ({
   users: [],
   isLoadingUsers: false,
   messages: [],
@@ -50,6 +51,23 @@ export const useChatStore = create((set) => ({
     } finally {
       set({ isSendingMessage: false });
     }
+  },
+
+  subcribeToNewMessages: (callback) => {
+    const { selectedUser } = get();
+    if (!selectedUser) return;
+
+    const socket = useAuthStore().getState().socket;
+
+    socket.on("newMessage", (newMessage) => {
+      set({ messages: [...get().messages, newMessage] });
+      if (callback) callback(newMessage);
+    });
+  },
+
+  unsubscribeFromNewMessages: () => {
+    const socket = useAuthStore().getState().socket;
+    socket.off("newMessage");
   },
 
   setActiveUser: (user) => set({ activeUser: user }),
