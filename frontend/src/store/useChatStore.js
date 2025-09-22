@@ -2,18 +2,16 @@ import { create } from "zustand";
 import { baseURL } from "../api/BaseUrl";
 
 export const useChatStore = create((set, get) => ({
-  users: [], // State ini sekarang akan berisi daftar teman
+  users: [],
   isLoadingUsers: false,
   messages: [],
   isLoadingMessages: false,
   activeUser: null,
   isSendingMessage: false,
 
-  // Ganti nama fungsi ini dari fetchUsers menjadi fetchFriends
   fetchFriends: async () => {
     set({ isLoadingUsers: true });
     try {
-      // Endpoint diubah untuk mengambil daftar teman
       const res = await baseURL.get("/users/friends");
       set({ users: res.data });
     } catch (error) {
