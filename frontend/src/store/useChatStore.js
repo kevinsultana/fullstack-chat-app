@@ -24,7 +24,7 @@ export const useChatStore = create((set, get) => ({
   },
 
   fetchMessages: async (userId) => {
-    set({ isLoadingMessages: true });
+    set({ isLoadingMessages: true, messages: [] });
     try {
       const res = await baseURL.get(`/messages/${userId}`);
       set({ messages: res.data });
@@ -53,21 +53,10 @@ export const useChatStore = create((set, get) => ({
     }
   },
 
-  subcribeToNewMessages: (callback) => {
-    const { selectedUser } = get();
-    if (!selectedUser) return;
-
-    const socket = useAuthStore().getState().socket;
-
-    socket.on("newMessage", (newMessage) => {
-      set({ messages: [...get().messages, newMessage] });
-      if (callback) callback(newMessage);
-    });
-  },
-
-  unsubscribeFromNewMessages: () => {
-    const socket = useAuthStore().getState().socket;
-    socket.off("newMessage");
+  addMessage: (newMessage) => {
+    set((state) => ({
+      messages: [...state.messages, newMessage],
+    }));
   },
 
   setActiveUser: (user) => set({ activeUser: user }),

@@ -1,12 +1,11 @@
 import React, { useEffect } from "react";
 import { useAuthStore } from "../store/useAuthStore";
 import { useChatStore } from "../store/useChatStore";
-import { socket } from "../api/socket";
 import UserList from "../components/UserList";
 import ChatPanel from "../components/ChatPanel";
 
 export default function Homepage() {
-  const { authUser } = useAuthStore();
+  const { authUser, socket } = useAuthStore();
   const {
     users,
     isLoadingUsers,
@@ -17,6 +16,7 @@ export default function Homepage() {
     isLoadingMessages,
     fetchMessages,
     sendMessage,
+    addMessage,
   } = useChatStore();
 
   useEffect(() => {
@@ -30,27 +30,28 @@ export default function Homepage() {
   }, [activeUser, fetchMessages]);
 
   useEffect(() => {
+    if (!socket) return;
+
     const handleReceiveMessage = (msg) => {
-      if (
-        activeUser &&
-        (msg.senderId === activeUser._id || msg.recipientId === activeUser._id)
-      ) {
-        sendMessage(activeUser._id, { text: msg.text, image: msg.image });
+      if (activeUser && msg.senderId === activeUser._id) {
+        addMessage(msg);
       }
     };
+
     socket.on("newMessage", handleReceiveMessage);
+
     return () => {
       socket.off("newMessage", handleReceiveMessage);
     };
-  }, [activeUser, sendMessage]);
+  }, [socket, activeUser, addMessage]);
 
-  // Mark messages as mine if senderId === authUser._id
   const displayMessages = messages.map((msg) => ({
     ...msg,
     isMine: msg.senderId === authUser?._id,
   }));
 
   const handleSend = async ({ text, image }) => {
+    if (!activeUser) return;
     let imageData = null;
     if (image) {
       // Convert image file to base64
