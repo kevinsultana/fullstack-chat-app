@@ -72,6 +72,7 @@ export default function Homepage() {
         activeUser={activeUser}
         onSelectUser={setActiveUser}
         isLoading={isLoadingUsers}
+        messages={displayMessages}
       />
       <div className="flex-1 h-full">
         <ChatPanel

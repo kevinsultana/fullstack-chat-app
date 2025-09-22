@@ -54,6 +54,7 @@ export const useChatStore = create((set, get) => ({
   },
 
   addMessage: (newMessage) => {
+    if (newMessage.sender === useAuthStore.getState().authUser._id) return;
     set((state) => ({
       messages: [...state.messages, newMessage],
     }));

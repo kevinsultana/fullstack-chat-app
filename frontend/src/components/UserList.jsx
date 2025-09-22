@@ -1,11 +1,15 @@
 import React from "react";
+import { useAuthStore } from "../store/useAuthStore";
 
 export default function UserList({
   users,
   activeUser,
   onSelectUser,
   isLoading,
+  messages,
 }) {
+  const { onlineUsers } = useAuthStore();
+
   return (
     <div className="h-full w-64 border-r overflow-y-auto">
       <h2 className="p-4 font-bold text-lg border-b">Users</h2>
@@ -16,22 +20,36 @@ export default function UserList({
           {users.map((user) => (
             <li
               key={user._id}
-              className={`p-4 cursor-pointer flex items-center gap-2 hover:bg-blue-100  transition ${
+              className={`p-4 cursor-pointer  hover:bg-blue-100  transition ${
                 activeUser?._id === user._id
                   ? "bg-gray-200 dark:text-black"
                   : ""
               }`}
               onClick={() => onSelectUser(user)}
             >
-              <img
-                src={
-                  user.profilePic ||
-                  "https://ui-avatars.com/api/?name=" + user.fullName
-                }
-                alt={user.fullName}
-                className="w-8 h-8 rounded-full object-cover"
-              />
-              <span>{user.fullName}</span>
+              <div className="flex items-center gap-2">
+                <div className="relative">
+                  <img
+                    src={
+                      user.profilePic ||
+                      "https://ui-avatars.com/api/?name=" + user.fullName
+                    }
+                    alt={user.fullName}
+                    className="w-8 h-8 rounded-full object-cover"
+                  />
+                  {onlineUsers.includes(user._id) && (
+                    <div className="absolute bottom-0 right-0 border-2 border-white w-2 h-2 bg-green-500 rounded-full" />
+                  )}
+                </div>
+                <span>{user.fullName}</span>
+                {/* message terakhir di chat */}
+              </div>
+              <p className="text-sm text-gray-500 overflow-hidden text-ellipsis max-w-[150px] whitespace-nowrap">
+                {messages[messages.length - 1]?.recipientId === user._id
+                  ? "You: "
+                  : user.fullName + ": "}
+                {messages[messages.length - 1]?.text}
+              </p>
             </li>
           ))}
         </ul>
