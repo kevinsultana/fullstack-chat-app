@@ -10,8 +10,7 @@ import Navbar from "./components/Navbar";
 import { Toaster } from "react-hot-toast";
 
 export default function App() {
-  const { authUser, isCheckingAuth, checkAuth, onlineUsers } = useAuthStore();
-  console.log(onlineUsers);
+  const { authUser, isCheckingAuth, checkAuth } = useAuthStore();
 
   useEffect(() => {
     checkAuth();
