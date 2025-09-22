@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useAuthStore } from "../store/useAuthStore";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router";
+import { Eye, EyeOff, Sparkles } from "lucide-react";
 
 export default function LoginPage() {
   const [formData, setFormData] = useState({
@@ -18,7 +19,7 @@ export default function LoginPage() {
     const { email, password } = formData;
 
     if (!email || !password) {
-      return toast.error("Email and Password are required");
+      return toast.error("Email and password are required");
     }
     if (!/\S+@\S+\.\S+/.test(email)) {
       return toast.error("Please enter a valid email address");
@@ -42,16 +43,44 @@ export default function LoginPage() {
       }
       navigate("/");
     } catch (error) {
+      console.error("Login failed:", error);
       toast.error("An unexpected error occurred");
     }
   };
 
   return (
-    <div className="min-h-screen pt-16 flex items-center justify-center">
-      <div className="card w-full max-w-md shadow-xl bg-base-100">
-        <div className="card-body">
-          <h1 className="text-3xl font-bold text-center mb-6">Login</h1>
-          <form onSubmit={handleSubmit} className="space-y-6">
+    <div className="flex min-h-[calc(100vh-8rem)] items-center justify-center px-4 pb-12">
+      <div className="grid w-full max-w-5xl gap-6 rounded-[2.5rem] border border-base-300/60 bg-base-100/80 p-6 shadow-2xl backdrop-blur lg:grid-cols-[1.1fr,0.9fr]">
+        <div className="hidden flex-col justify-between rounded-[2rem] border border-base-300/60 bg-gradient-to-br from-primary/10 via-secondary/10 to-base-100/60 p-8 lg:flex">
+          <div className="space-y-4">
+            <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-2 text-sm font-semibold text-primary">
+              <Sparkles size={18} /> Premium messaging experience
+            </span>
+            <h1 className="text-3xl font-bold text-base-content">
+              Welcome back to Kevin Chats
+            </h1>
+            <p className="text-sm text-base-content/70">
+              Stay connected with your friends and communities in a delightful and modern chat experience powered by real-time messaging.
+            </p>
+          </div>
+          <div className="space-y-3 text-sm text-base-content/70">
+            <p className="font-semibold text-base-content">Why you'll love it</p>
+            <ul className="list-disc space-y-2 pl-5">
+              <li>Instant notifications keep your conversations active.</li>
+              <li>Personalized profiles help friends recognize you faster.</li>
+              <li>Dark and light modes for every mood.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="rounded-[2rem] border border-base-300/60 bg-base-100/90 p-8">
+          <div className="text-center">
+            <h2 className="text-2xl font-bold text-base-content">Sign in</h2>
+            <p className="mt-2 text-sm text-base-content/60">
+              Enter your credentials to continue the conversation.
+            </p>
+          </div>
+          <form onSubmit={handleSubmit} className="mt-8 space-y-6">
             <div className="form-control">
               <label className="label">
                 <span className="label-text font-semibold">Email</span>
@@ -59,95 +88,68 @@ export default function LoginPage() {
               <input
                 type="email"
                 id="email"
-                className="input input-bordered w-full"
+                className="input input-bordered input-lg"
                 value={formData.email}
                 onChange={(e) =>
                   setFormData({ ...formData, email: e.target.value })
                 }
-                placeholder="Enter your email"
+                placeholder="name@example.com"
                 autoComplete="email"
                 required
               />
             </div>
-            <div className="form-control relative">
+            <div className="form-control">
               <label className="label">
                 <span className="label-text font-semibold">Password</span>
               </label>
-              <input
-                type={showPassword ? "text" : "password"}
-                id="password"
-                className="input input-bordered w-full pr-12"
-                value={formData.password}
-                onChange={(e) =>
-                  setFormData({ ...formData, password: e.target.value })
-                }
-                placeholder="Enter your password"
-                autoComplete="current-password"
-                required
-              />
-              <button
-                type="button"
-                className="absolute right-3 top-12 text-base-content/60 hover:text-base-content"
-                onClick={() => setShowPassword(!showPassword)}
-                tabIndex={-1}
-              >
-                {showPassword ? (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="w-5 h-5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                    />
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-.274.816-.632 1.582-1.07 2.276M15.362 17.362A9.953 9.953 0 0112 19c-4.477 0-8.268-2.943-9.542-7a9.978 9.978 0 012.042-3.362"
-                    />
-                  </svg>
-                ) : (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="w-5 h-5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M13.875 18.825A10.05 10.05 0 0112 19c-4.477 0-8.268-2.943-9.542-7a9.978 9.978 0 012.042-3.362M6.634 6.634A9.953 9.953 0 0112 5c4.477 0 8.268 2.943 9.542 7a9.978 9.978 0 01-4.21 5.042M3 3l18 18"
-                    />
-                  </svg>
-                )}
-              </button>
+              <div className="input input-bordered input-lg flex items-center gap-3">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  id="password"
+                  className="w-full bg-transparent outline-none"
+                  value={formData.password}
+                  onChange={(e) =>
+                    setFormData({ ...formData, password: e.target.value })
+                  }
+                  placeholder="Enter your password"
+                  autoComplete="current-password"
+                  required
+                />
+                <button
+                  type="button"
+                  className="text-base-content/60 hover:text-base-content"
+                  onClick={() => setShowPassword(!showPassword)}
+                  tabIndex={-1}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
+              </div>
             </div>
+
             <button
               type="submit"
               disabled={isLoggingIn}
-              className="btn btn-primary w-full"
+              className="btn btn-primary btn-lg w-full"
             >
               {isLoggingIn ? (
                 <span className="loading loading-dots loading-sm"></span>
               ) : (
-                "Login"
+                "Log in"
               )}
             </button>
-            <p className="text-center text-sm">
-              Don't have an account?{" "}
-              <a href="/register" className="link link-primary">
-                Register here
-              </a>
-            </p>
           </form>
+
+          <p className="mt-6 text-center text-sm text-base-content/70">
+            Don't have an account?
+            <button
+              type="button"
+              className="btn btn-link text-sm"
+              onClick={() => navigate("/register")}
+            >
+              Create one now
+            </button>
+          </p>
         </div>
       </div>
     </div>

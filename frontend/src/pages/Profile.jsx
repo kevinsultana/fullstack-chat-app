@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useAuthStore } from "../store/useAuthStore";
-import { Camera, User, Mail, Upload } from "lucide-react";
+import { Camera, User, Mail, Upload, Calendar } from "lucide-react";
 import toast from "react-hot-toast";
 
 export default function Profile() {
@@ -37,13 +37,14 @@ export default function Profile() {
       await updateProfile(profileData);
       toast.success("Profile updated successfully!");
     } catch (error) {
+      console.error("Profile update failed:", error);
       toast.error("Failed to update profile");
     }
   };
 
   if (!authUser) {
     return (
-      <div className="min-h-screen pt-16 flex items-center justify-center">
+      <div className="flex min-h-[calc(100vh-8rem)] items-center justify-center">
         <div className="flex flex-col items-center space-y-4">
           <span className="loading loading-dots loading-xl text-primary"></span>
           <p className="text-base-content/60">Loading profile...</p>
@@ -53,38 +54,32 @@ export default function Profile() {
   }
 
   return (
-    <div className="min-h-screen pt-16 flex items-center justify-center p-4">
-      <div className="card w-full max-w-2xl shadow-xl bg-base-100">
-        <div className="card-body">
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold mb-2">Profile</h1>
-            <p className="text-base-content/60">Manage your account information</p>
-          </div>
-
-          <form onSubmit={handleSubmit} className="space-y-8">
-            {/* Profile Picture Section */}
-            <div className="flex flex-col items-center space-y-4">
+    <div className="flex min-h-[calc(100vh-8rem)] items-start justify-center px-4 pb-12">
+      <div className="w-full max-w-5xl space-y-6">
+        <div className="rounded-[2.5rem] border border-base-300/60 bg-base-100/80 p-8 shadow-2xl backdrop-blur">
+          <div className="flex flex-col gap-8 lg:flex-row lg:items-start">
+            <div className="flex flex-col items-center gap-6 lg:w-1/3">
               <div className="relative">
                 <div className="avatar">
-                  <div className="w-32 h-32 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
+                  <div className="w-40 rounded-full border-4 border-primary/30 bg-base-200 p-1 shadow-lg">
                     {selectedImg || authUser.profilePic ? (
                       <img
                         src={selectedImg || authUser.profilePic}
                         alt="Profile"
-                        className="object-cover"
+                        className="h-full w-full rounded-full object-cover"
                       />
                     ) : (
-                      <div className="flex items-center justify-center bg-base-300">
-                        <User className="w-16 h-16 text-base-content/40" />
+                      <div className="flex h-full items-center justify-center rounded-full bg-base-300">
+                        <User className="h-16 w-16 text-base-content/40" />
                       </div>
                     )}
                   </div>
                 </div>
                 <label
                   htmlFor="avatar-upload"
-                  className="btn btn-primary btn-circle btn-sm absolute bottom-0 right-0"
+                  className="btn btn-primary btn-circle btn-sm absolute bottom-4 right-4"
                 >
-                  <Camera className="w-4 h-4" />
+                  <Camera className="h-4 w-4" />
                   <input
                     type="file"
                     id="avatar-upload"
@@ -94,102 +89,125 @@ export default function Profile() {
                   />
                 </label>
               </div>
-              <p className="text-sm text-base-content/60">
-                Click the camera icon to upload a new photo
-              </p>
-            </div>
-
-            {/* Form Fields */}
-            <div className="space-y-6">
-              <div className="form-control">
-                <label className="label">
-                  <span className="label-text font-semibold">
-                    <User className="w-4 h-4 inline mr-2" />
-                    Full Name
-                  </span>
-                </label>
-                <input
-                  type="text"
-                  className="input input-bordered w-full"
-                  value={formData.fullName}
-                  onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-                  placeholder="Enter your full name"
-                />
-              </div>
-
-              <div className="form-control">
-                <label className="label">
-                  <span className="label-text font-semibold">
-                    <Mail className="w-4 h-4 inline mr-2" />
-                    Email
-                  </span>
-                </label>
-                <input
-                  type="email"
-                  className="input input-bordered w-full input-disabled"
-                  value={formData.email}
-                  disabled
-                  placeholder="Email address"
-                />
-                <label className="label">
-                  <span className="label-text-alt text-base-content/60">
-                    Email cannot be changed
-                  </span>
-                </label>
+              <div className="text-center">
+                <h1 className="text-2xl font-bold text-base-content">
+                  {authUser.fullName}
+                </h1>
+                <p className="text-sm text-base-content/60">
+                  Personalize your presence for friends and collaborators.
+                </p>
               </div>
             </div>
 
-            {/* Action Buttons */}
-            <div className="flex gap-4">
-              <button
-                type="submit"
-                disabled={isUpdatingProfile}
-                className="btn btn-primary flex-1"
-              >
-                {isUpdatingProfile ? (
-                  <>
-                    <Upload className="w-4 h-4 mr-2 animate-spin" />
-                    Updating...
-                  </>
-                ) : (
-                  <>
-                    <Upload className="w-4 h-4 mr-2" />
-                    Update Profile
-                  </>
-                )}
-              </button>
-              <button
-                type="button"
-                className="btn btn-outline"
-                onClick={() => {
-                  setFormData({
-                    fullName: authUser.fullName,
-                    email: authUser.email,
-                  });
-                  setSelectedImg(null);
-                }}
-              >
-                Reset
-              </button>
-            </div>
-          </form>
+            <div className="flex-1">
+              <div className="rounded-[2rem] border border-base-300/60 bg-base-100/90 p-6">
+                <h2 className="text-xl font-semibold text-base-content">
+                  Profile details
+                </h2>
+                <p className="mt-1 text-sm text-base-content/60">
+                  Update your display information and profile photo.
+                </p>
 
-          {/* User Info Display */}
-          <div className="divider"></div>
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Account Information</h3>
-            <div className="space-y-3">
-              <div className="flex justify-between items-center">
-                <span className="text-base-content/60">Member since:</span>
-                <span className="font-medium">
-                  {authUser.createdAt ? new Date(authUser.createdAt).toLocaleDateString() : "N/A"}
-                </span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-base-content/60">Account status:</span>
-                <div className="badge badge-success">Active</div>
+                <form onSubmit={handleSubmit} className="mt-6 space-y-6">
+                  <div className="form-control">
+                    <label className="label">
+                      <span className="label-text font-semibold">
+                        <User className="mr-2 inline h-4 w-4" /> Full name
+                      </span>
+                    </label>
+                    <input
+                      type="text"
+                      className="input input-bordered input-lg"
+                      value={formData.fullName}
+                      onChange={(e) =>
+                        setFormData({ ...formData, fullName: e.target.value })
+                      }
+                      placeholder="Enter your full name"
+                    />
+                  </div>
+
+                  <div className="form-control">
+                    <label className="label">
+                      <span className="label-text font-semibold">
+                        <Mail className="mr-2 inline h-4 w-4" /> Email
+                      </span>
+                    </label>
+                    <input
+                      type="email"
+                      className="input input-bordered input-lg"
+                      value={formData.email}
+                      disabled
+                      placeholder="Email address"
+                    />
+                    <label className="label">
+                      <span className="label-text-alt text-base-content/60">
+                        Email cannot be changed
+                      </span>
+                    </label>
+                  </div>
+
+                  <div className="flex flex-col gap-4 sm:flex-row">
+                    <button
+                      type="submit"
+                      disabled={isUpdatingProfile}
+                      className="btn btn-primary btn-lg flex-1"
+                    >
+                      {isUpdatingProfile ? (
+                        <>
+                          <Upload className="mr-2 h-5 w-5 animate-spin" />
+                          Updating...
+                        </>
+                      ) : (
+                        <>
+                          <Upload className="mr-2 h-5 w-5" />
+                          Save changes
+                        </>
+                      )}
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-outline btn-lg"
+                      onClick={() => {
+                        setFormData({
+                          fullName: authUser.fullName,
+                          email: authUser.email,
+                        });
+                        setSelectedImg(null);
+                      }}
+                    >
+                      Reset
+                    </button>
+                  </div>
+                </form>
               </div>
             </div>
+          </div>
+        </div>
+
+        <div className="grid gap-4 rounded-[2.5rem] border border-base-300/60 bg-base-100/70 p-6 backdrop-blur lg:grid-cols-3">
+          <div className="rounded-2xl bg-primary/10 p-4 text-primary">
+            <p className="text-xs uppercase tracking-[0.3em]">Friends</p>
+            <p className="mt-3 text-3xl font-bold">
+              {authUser.friends?.length || 0}
+            </p>
+            <p className="text-xs text-primary/70">Active connections</p>
+          </div>
+          <div className="rounded-2xl bg-secondary/10 p-4 text-secondary">
+            <p className="text-xs uppercase tracking-[0.3em]">Requests</p>
+            <p className="mt-3 text-3xl font-bold">
+              {authUser.friendRequestsSent?.length || 0}
+            </p>
+            <p className="text-xs text-secondary/70">Pending invites</p>
+          </div>
+          <div className="rounded-2xl bg-base-200/80 p-4 text-base-content">
+            <p className="text-xs uppercase tracking-[0.3em]">Member since</p>
+            <p className="mt-3 flex items-center gap-2 text-xl font-semibold">
+              <Calendar className="h-5 w-5" />
+              {authUser.createdAt
+                ? new Date(authUser.createdAt).toLocaleDateString()
+                : "N/A"}
+            </p>
+            <p className="text-xs text-base-content/60">Thanks for being part of the community!</p>
           </div>
         </div>
       </div>

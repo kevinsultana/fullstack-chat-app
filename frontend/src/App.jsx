@@ -14,20 +14,23 @@ export default function App() {
 
   useEffect(() => {
     checkAuth();
-  }, []);
+  }, [checkAuth]);
 
   if (isCheckingAuth) {
     return (
-      <div className="flex h-screen items-center justify-center">
+      <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-gradient-to-br from-primary/10 via-base-200 to-base-100 text-base-content">
         <span className="loading loading-dots loading-lg text-primary"></span>
+        <p className="text-sm font-medium text-base-content/70">
+          Preparing your messaging experience...
+        </p>
       </div>
     );
   }
 
   return (
-    <div className="flex max-h-screen flex-col bg-base-200">
+    <div className="flex min-h-screen flex-col bg-gradient-to-br from-base-200 via-base-300/60 to-base-200 text-base-content">
       <Navbar />
-      <main className="">
+      <main className="flex-1 overflow-hidden pt-20">
         <Routes>
           <Route
             path="/"
@@ -53,7 +56,17 @@ export default function App() {
           />
         </Routes>
       </main>
-      <Toaster />
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          style: {
+            background: "hsl(var(--b1))",
+            color: "hsl(var(--bc))",
+            borderRadius: "1rem",
+            border: "1px solid hsl(var(--b3))",
+          },
+        }}
+      />
     </div>
   );
 }

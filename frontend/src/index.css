@@ -1,6 +1,16 @@
 @import "tailwindcss";
 @plugin "daisyui";
 
+@layer base {
+  body {
+    @apply min-h-screen bg-gradient-to-br from-base-200 via-base-300/60 to-base-200 text-base-content antialiased;
+  }
+
+  #root {
+    @apply min-h-screen;
+  }
+}
+
 /* :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;

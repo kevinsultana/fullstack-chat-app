@@ -73,50 +73,66 @@ export default function Homepage() {
   };
 
   return (
-    <div className="drawer h-full md:drawer-open">
-      <input id="my-drawer" type="checkbox" className="drawer-toggle" />
-
-      <div className="drawer-content flex flex-col h-full">
-        <div className="flex items-center p-2 md:hidden bg-base-100 border-b">
-          <label htmlFor="my-drawer" className="btn btn-ghost drawer-button">
-            <Menu /> Friends
-          </label>
-        </div>
-
-        {/* Panel Chat Utama */}
-        {activeUser ? (
-          <ChatPanel
-            messages={displayMessages}
-            onSend={handleSend}
-            isLoading={isLoadingMessages}
-            activeUser={activeUser}
-          />
-        ) : (
-          <div className="flex flex-col items-center justify-center h-full text-center p-4">
-            <MessageSquarePlus size={48} className="text-base-content/30" />
-            <h2 className="text-2xl font-bold mt-4">
-              Welcome, {authUser?.fullName}
-            </h2>
-            <p className="text-base-content/60">
-              Select a friend to start chatting.
-            </p>
+    <div className="flex h-full flex-1 flex-col gap-6 px-4 pb-8">
+      <div className="drawer min-h-[calc(100vh-8rem)] rounded-[2.5rem] border border-base-300/60 bg-base-100/60 backdrop-blur lg:drawer-open">
+        <input id="friends-drawer" type="checkbox" className="drawer-toggle" />
+        <div className="drawer-content flex flex-col overflow-hidden">
+          <div className="flex items-center justify-between border-b border-base-300/60 px-4 py-3 lg:hidden">
+            <div>
+              <h1 className="text-lg font-semibold text-base-content">
+                Welcome back, {authUser?.fullName?.split(" ")[0] || "Friend"}
+              </h1>
+              <p className="text-xs text-base-content/60">
+                Choose a friend to begin chatting.
+              </p>
+            </div>
+            <label
+              htmlFor="friends-drawer"
+              className="btn btn-primary btn-sm btn-circle drawer-button"
+            >
+              <Menu size={18} />
+            </label>
           </div>
-        )}
-      </div>
 
-      <div className="drawer-side">
-        <label
-          htmlFor="my-drawer"
-          aria-label="close sidebar"
-          className="drawer-overlay"
-        ></label>
-        <div className="bg-base-200 w-80 min-h-full max-h-full overflow-y-auto">
-          <UserList
-            users={users}
-            activeUser={activeUser}
-            onSelectUser={setActiveUser}
-            isLoading={isLoadingUsers}
-          />
+          <div className="flex flex-1 flex-col gap-4 p-4">
+            {activeUser ? (
+              <ChatPanel
+                messages={displayMessages}
+                onSend={handleSend}
+                isLoading={isLoadingMessages}
+                activeUser={activeUser}
+              />
+            ) : (
+              <div className="flex flex-1 flex-col items-center justify-center gap-6 rounded-[2rem] border border-dashed border-base-300/60 bg-base-100/60 p-10 text-center text-base-content/70">
+                <div className="rounded-full bg-primary/10 p-6 text-primary">
+                  <MessageSquarePlus size={40} />
+                </div>
+                <div className="space-y-2">
+                  <h2 className="text-2xl font-semibold text-base-content">
+                    Welcome, {authUser?.fullName}
+                  </h2>
+                  <p className="max-w-md text-sm">
+                    Select a friend from the list to start a conversation or head to "Find friends" to expand your circle.
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+        <div className="drawer-side">
+          <label
+            htmlFor="friends-drawer"
+            aria-label="close sidebar"
+            className="drawer-overlay"
+          ></label>
+          <div className="w-80 max-w-full border-l border-base-300/60 bg-base-100/80 p-0">
+            <UserList
+              users={users}
+              activeUser={activeUser}
+              onSelectUser={setActiveUser}
+              isLoading={isLoadingUsers}
+            />
+          </div>
         </div>
       </div>
     </div>
