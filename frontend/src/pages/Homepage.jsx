@@ -73,11 +73,10 @@ export default function Homepage() {
   };
 
   return (
-    <div className="drawer max-h-[calc(100vh - 64px)] overflow-hidden md:drawer-open">
+    <div className="drawer h-full md:drawer-open">
       <input id="my-drawer" type="checkbox" className="drawer-toggle" />
 
-      <div className="drawer-content flex flex-col h-full max-h-screen overflow-hidden">
-        {/* Tombol menu untuk mobile */}
+      <div className="drawer-content flex flex-col h-full">
         <div className="flex items-center p-2 md:hidden bg-base-100 border-b">
           <label htmlFor="my-drawer" className="btn btn-ghost drawer-button">
             <Menu /> Friends
@@ -93,7 +92,7 @@ export default function Homepage() {
             activeUser={activeUser}
           />
         ) : (
-          <div className="flex flex-col items-center justify-center h-full max-h-screen text-center p-4">
+          <div className="flex flex-col items-center justify-center h-full text-center p-4">
             <MessageSquarePlus size={48} className="text-base-content/30" />
             <h2 className="text-2xl font-bold mt-4">
               Welcome, {authUser?.fullName}
@@ -111,7 +110,7 @@ export default function Homepage() {
           aria-label="close sidebar"
           className="drawer-overlay"
         ></label>
-        <div className="bg-base-200 w-80 min-h-screen max-h-screen overflow-y-auto">
+        <div className="bg-base-200 w-80 min-h-full max-h-full overflow-y-auto">
           <UserList
             users={users}
             activeUser={activeUser}

@@ -7,11 +7,11 @@ export default function NotificationDropdown() {
   const { notifications, fetchNotifications } = useAuthStore();
 
   const handleRespond = async (senderId, status, event) => {
-    event.stopPropagation(); // Mencegah dropdown tertutup
+    event.stopPropagation();
     try {
       await baseURL.post("/users/respond-request", { senderId, status });
       toast.success(`Request ${status}!`);
-      fetchNotifications(); // Ambil ulang notifikasi untuk memperbarui daftar
+      fetchNotifications();
     } catch (error) {
       toast.error("Failed to respond to request.");
     }

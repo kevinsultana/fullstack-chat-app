@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Eye, EyeClosed } from "lucide-react";
-import { baseURL } from "../api/BaseUrl";
 import toast from "react-hot-toast";
 import { useAuthStore } from "../store/useAuthStore";
 

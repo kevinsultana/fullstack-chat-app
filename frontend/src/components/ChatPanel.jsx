@@ -1,22 +1,18 @@
-// frontend/src/components/ChatPanel.jsx
-
 import React, { useEffect, useRef, useState } from "react";
-import { X, Paperclip } from "lucide-react"; // Impor ikon
+import { X, Paperclip } from "lucide-react";
 
 export default function ChatPanel({ messages, onSend, isLoading, activeUser }) {
   const [text, setText] = useState("");
   const [image, setImage] = useState(null);
-  // State baru untuk menyimpan URL preview gambar
   const [imagePreview, setImagePreview] = useState(null);
 
   const messagesEndRef = useRef(null);
-  const fileInputRef = useRef(null); // Ref untuk input file
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // Reset state saat activeUser berubah
   useEffect(() => {
     setText("");
     setImage(null);
@@ -27,7 +23,6 @@ export default function ChatPanel({ messages, onSend, isLoading, activeUser }) {
     const file = e.target.files[0];
     if (file) {
       setImage(file);
-      // Buat URL sementara untuk preview
       setImagePreview(URL.createObjectURL(file));
     }
   };
@@ -35,7 +30,6 @@ export default function ChatPanel({ messages, onSend, isLoading, activeUser }) {
   const removeImage = () => {
     setImage(null);
     setImagePreview(null);
-    // Reset nilai input file agar bisa memilih file yang sama lagi
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
@@ -46,11 +40,11 @@ export default function ChatPanel({ messages, onSend, isLoading, activeUser }) {
     if (!text && !image) return;
     onSend({ text, image });
     setText("");
-    removeImage(); // Ganti dengan fungsi removeImage untuk membersihkan semua
+    removeImage();
   };
 
   return (
-    <div className="flex flex-col flex-1 max-h-[calc(100vh-64px)]">
+    <div className="flex flex-col flex-1 h-full">
       <div className="flex items-center p-4 border-b ">
         <img
           src={
@@ -71,7 +65,7 @@ export default function ChatPanel({ messages, onSend, isLoading, activeUser }) {
           <div>
             {messages.map((msg, index) => (
               <div
-                key={msg._id || `msg-${index}`} // Fallback key
+                key={msg._id || `msg-${index}`}
                 className={`mb-4 flex ${
                   msg.isMine ? "justify-end" : "justify-start"
                 }`}
@@ -104,7 +98,6 @@ export default function ChatPanel({ messages, onSend, isLoading, activeUser }) {
       </div>
       {activeUser && (
         <div className="p-4 border-t">
-          {/* Container untuk preview gambar */}
           {imagePreview && (
             <div className="relative w-28 mb-2">
               <img

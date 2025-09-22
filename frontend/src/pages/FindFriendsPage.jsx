@@ -35,7 +35,6 @@ export default function FindFriendsPage() {
       setIsLoading(true);
       try {
         const res = await baseURL.get(`/users/find?query=${debouncedQuery}`);
-        // Filter out existing friends and requests
         const friendIds = new Set([
           ...authUser.friends,
           ...authUser.friendRequestsSent,

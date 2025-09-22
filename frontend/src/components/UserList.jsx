@@ -6,7 +6,6 @@ export default function UserList({
   activeUser,
   onSelectUser,
   isLoading,
-  messages,
 }) {
   const { onlineUsers } = useAuthStore();
 
@@ -42,7 +41,6 @@ export default function UserList({
                   )}
                 </div>
                 <span>{user.fullName}</span>
-                {/* message terakhir di chat */}
               </div>
             </li>
           ))}
