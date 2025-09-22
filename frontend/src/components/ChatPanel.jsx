@@ -50,7 +50,7 @@ export default function ChatPanel({ messages, onSend, isLoading, activeUser }) {
   };
 
   return (
-    <div className="flex flex-col h-full flex-1">
+    <div className="flex flex-col flex-1 max-h-[calc(100vh-64px)]">
       <div className="flex items-center p-4 border-b ">
         <img
           src={

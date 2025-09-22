@@ -1,22 +1,23 @@
 import { create } from "zustand";
 import { baseURL } from "../api/BaseUrl";
-import { useAuthStore } from "./useAuthStore";
 
 export const useChatStore = create((set, get) => ({
-  users: [],
+  users: [], // State ini sekarang akan berisi daftar teman
   isLoadingUsers: false,
   messages: [],
   isLoadingMessages: false,
   activeUser: null,
   isSendingMessage: false,
 
-  fetchUsers: async () => {
+  // Ganti nama fungsi ini dari fetchUsers menjadi fetchFriends
+  fetchFriends: async () => {
     set({ isLoadingUsers: true });
     try {
-      const res = await baseURL.get("/messages/users");
-      set({ users: res.data.users });
+      // Endpoint diubah untuk mengambil daftar teman
+      const res = await baseURL.get("/users/friends");
+      set({ users: res.data });
     } catch (error) {
-      console.error("Failed to fetch users:", error);
+      console.error("Failed to fetch friends:", error);
       set({ users: [] });
     } finally {
       set({ isLoadingUsers: false });
@@ -54,12 +55,11 @@ export const useChatStore = create((set, get) => ({
   },
 
   addMessage: (newMessage) => {
-    if (newMessage.sender === useAuthStore.getState().authUser._id) return;
     set((state) => ({
       messages: [...state.messages, newMessage],
     }));
   },
 
   setActiveUser: (user) => set({ activeUser: user }),
-  clearActiveUser: () => set({ activeUser: null }),
+  clearActiveUser: () => set({ activeUser: null, messages: [] }),
 }));

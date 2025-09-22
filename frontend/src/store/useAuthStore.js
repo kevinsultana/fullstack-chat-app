@@ -7,10 +7,10 @@ export const useAuthStore = create((set, get) => ({
   isSigningUp: false,
   isLoggingIn: false,
   isUpdatingProfile: false,
-
-  isCheckingAuth: false,
+  isCheckingAuth: true, // Set true di awal
   socket: null,
   onlineUsers: [],
+  notifications: [],
 
   checkAuth: async () => {
     set({ isCheckingAuth: true });
@@ -28,16 +28,11 @@ export const useAuthStore = create((set, get) => ({
   logout: async () => {
     try {
       await baseURL.post("/auth/logout");
-      // Disconnect socket on logout
-      if (get().socket) {
-        get().socket.disconnect();
-        get().disconnectSocket();
-      }
+      get().disconnectSocket();
     } catch (error) {
       console.error("Logout failed:", error);
     } finally {
-      // Hapus authUser dari state setelah logout (berhasil atau gagal)
-      set({ authUser: null });
+      set({ authUser: null, notifications: [], onlineUsers: [] });
     }
   },
 
@@ -45,7 +40,7 @@ export const useAuthStore = create((set, get) => ({
     set({ isLoggingIn: true });
     try {
       const res = await baseURL.post("/auth/login", formData);
-      set({ authUser: res.data });
+      set({ authUser: res.data.data }); // Sesuaikan dengan struktur data dari backend
       get().connectSocket();
       return { success: true };
     } catch (error) {
@@ -63,7 +58,7 @@ export const useAuthStore = create((set, get) => ({
     set({ isSigningUp: true });
     try {
       const res = await baseURL.post("/auth/register", formData);
-      set({ authUser: res.data });
+      set({ authUser: res.data.data }); // Sesuaikan dengan struktur data dari backend
       get().connectSocket();
       return { success: true };
     } catch (error) {
@@ -82,7 +77,7 @@ export const useAuthStore = create((set, get) => ({
     set({ isUpdatingProfile: true });
     try {
       const res = await baseURL.put("/auth/update-profile", formData);
-      set({ authUser: res.data });
+      set({ authUser: res.data.data }); // Sesuaikan dengan struktur data dari backend
       return { success: true };
     } catch (error) {
       return {
@@ -97,23 +92,56 @@ export const useAuthStore = create((set, get) => ({
   },
 
   connectSocket: () => {
-    const { authUser } = get();
-    if (!authUser || get().socket?.connected) return;
-    const socket = io("http://localhost:5000", {
+    const { authUser, socket } = get();
+    if (!authUser || (socket && socket.connected)) return;
+
+    const newSocket = io("http://localhost:5000", {
       query: { userId: authUser._id },
     });
-    socket.connect();
-    set({ socket });
 
-    socket.on("getOnlineUsers", (userIds) => {
+    set({ socket: newSocket });
+
+    newSocket.on("getOnlineUsers", (userIds) => {
       set({ onlineUsers: userIds });
+    });
+
+    newSocket.on("new_notification", (newNotification) => {
+      set((state) => ({
+        notifications: [newNotification, ...state.notifications],
+      }));
+      // Optional: Tampilkan toast notifikasi
+      toast.success("You have a new notification!");
     });
   },
 
   disconnectSocket: () => {
-    if (get().socket) {
-      get().socket.disconnect();
-      set({ socket: null });
+    const { socket } = get();
+    if (socket) {
+      socket.disconnect();
+      set({ socket: null, onlineUsers: [] });
+    }
+  },
+
+  fetchNotifications: async () => {
+    try {
+      const res = await baseURL.get("/notifications");
+      set({ notifications: res.data });
+    } catch (error) {
+      console.error("Failed to fetch notifications:", error);
+    }
+  },
+
+  markNotificationsAsRead: async () => {
+    const unreadNotifications = get().notifications.some((n) => !n.read);
+    if (!unreadNotifications) return;
+
+    try {
+      await baseURL.post("/notifications/mark-read");
+      set((state) => ({
+        notifications: state.notifications.map((n) => ({ ...n, read: true })),
+      }));
+    } catch (error) {
+      console.error("Failed to mark notifications as read:", error);
     }
   },
 }));

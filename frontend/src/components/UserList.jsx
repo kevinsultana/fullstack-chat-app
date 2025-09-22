@@ -44,12 +44,6 @@ export default function UserList({
                 <span>{user.fullName}</span>
                 {/* message terakhir di chat */}
               </div>
-              <p className="text-sm text-gray-500 overflow-hidden text-ellipsis max-w-[150px] whitespace-nowrap">
-                {messages[messages.length - 1]?.recipientId === user._id
-                  ? "You: "
-                  : user.fullName + ": "}
-                {messages[messages.length - 1]?.text}
-              </p>
             </li>
           ))}
         </ul>
