@@ -15,9 +15,27 @@ dotenv.config();
 const PORT = process.env.PORT || 5000;
 const __dirname = path.resolve();
 
+const allowedOrigins = [
+  "https://kevinsultana.online",
+  "https://www.kevinsultana.online",
+
+  "http://localhost:5173",
+  "http://192.168.0.13:5173",
+  "http://100.126.144.16:5173",
+];
+
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: (origin, callback) => {
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        console.error(`CORS Error: Origin ${origin} not allowed.`);
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
   })
 );
