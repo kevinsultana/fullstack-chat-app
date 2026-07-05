@@ -73,11 +73,15 @@ export default function Homepage() {
   };
 
   return (
-    <div className="flex h-full flex-1 flex-col gap-6 px-4 pb-8">
-      <div className="drawer min-h-[calc(100vh-8rem)] rounded-[2.5rem] border border-base-300/60 bg-base-100/60 backdrop-blur lg:drawer-open">
+    <div className="flex h-full flex-1 flex-col overflow-hidden">
+      {/* ── Drawer: sidebar kiri, chat kanan ── */}
+      <div className="drawer min-h-0 flex-1 lg:drawer-open">
         <input id="friends-drawer" type="checkbox" className="drawer-toggle" />
+
+        {/* ═══ Kanan: ChatPanel ═══ */}
         <div className="drawer-content flex flex-col overflow-hidden">
-          <div className="flex items-center justify-between border-b border-base-300/60 px-4 py-3 lg:hidden">
+          {/* Mobile header */}
+          <div className="flex shrink-0 items-center justify-between border-b border-base-300/60 bg-base-100/70 px-4 py-3 backdrop-blur lg:hidden">
             <div>
               <h1 className="text-lg font-semibold text-base-content">
                 Welcome back, {authUser?.fullName?.split(" ")[0] || "Friend"}
@@ -94,7 +98,8 @@ export default function Homepage() {
             </label>
           </div>
 
-          <div className="flex flex-1 flex-col gap-4 p-4">
+          {/* Chat or empty state */}
+          <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
             {activeUser ? (
               <ChatPanel
                 messages={displayMessages}
@@ -103,29 +108,32 @@ export default function Homepage() {
                 activeUser={activeUser}
               />
             ) : (
-              <div className="flex flex-1 flex-col items-center justify-center gap-6 rounded-[2rem] border border-dashed border-base-300/60 bg-base-100/60 p-10 text-center text-base-content/70">
+              <div className="flex flex-1 flex-col items-center justify-center gap-5 bg-base-100/60 p-10 text-center">
                 <div className="rounded-full bg-primary/10 p-6 text-primary">
-                  <MessageSquarePlus size={40} />
+                  <MessageSquarePlus size={44} />
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-1.5">
                   <h2 className="text-2xl font-semibold text-base-content">
-                    Welcome, {authUser?.fullName}
+                    Welcome, {authUser?.fullName?.split(" ")[0] || "Friend"}
                   </h2>
-                  <p className="max-w-md text-sm">
-                    Select a friend from the list to start a conversation or head to "Find friends" to expand your circle.
+                  <p className="max-w-sm text-sm leading-relaxed text-base-content/60">
+                    Select a friend from the sidebar to start chatting, or
+                    discover new people to connect with.
                   </p>
                 </div>
               </div>
             )}
           </div>
         </div>
-        <div className="drawer-side">
+
+        {/* ═══ Kiri: Sidebar ═══ */}
+        <div className="drawer-side z-40">
           <label
             htmlFor="friends-drawer"
             aria-label="close sidebar"
             className="drawer-overlay"
-          ></label>
-          <div className="w-80 max-w-full border-l border-base-300/60 bg-base-100/80 p-0">
+          />
+          <div className="flex min-h-0 w-80 max-w-full flex-col overflow-hidden border-r border-base-300/60 bg-base-100/80">
             <UserList
               users={users}
               activeUser={activeUser}
